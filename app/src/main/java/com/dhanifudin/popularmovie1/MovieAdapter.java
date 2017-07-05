@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dhanifudin.popularmovie1.model.Movie;
@@ -45,7 +46,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         Movie movie = movies[position];
-        holder.bind(movie.getPosterPath());
+        holder.bind(movie);
     }
 
     @Override
@@ -57,18 +58,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private Context context;
         ImageView movieImage;
+        TextView titleText;
 
         public MovieViewHolder(View view) {
             super(view);
             context = view.getContext();
-            movieImage = (ImageView) view.findViewById(R.id.movie_image);
+            movieImage = (ImageView) view.findViewById(R.id.image_movie);
+            titleText = (TextView) view.findViewById(R.id.text_title);
             view.setOnClickListener(this);
         }
 
-        void bind(String imageUrl) {
+        void bind(Movie movie) {
             Picasso.with(context)
-                    .load(imageUrl)
+                    .load(movie.getPosterPath())
                     .into(movieImage);
+            titleText.setText(movie.getTitle());
         }
 
         @Override

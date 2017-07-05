@@ -87,7 +87,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             );
             originalTitleText.setText(originalTitle);
             releaseText.setText(movie.getReleaseDate());
-            movieRating.setRating(movie.getVoteAverage());
+            movieRating.setRating(movie.getVoteAverage() / 2);
             String information = String.format(
                     "%.2f/10 of %d",
                     movie.getVoteAverage(),
