@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Popular Movie</string>
+    <string name="movie_detail">Movie Detail</string>
+    <string name="connection_error">An error has occurred. No network connection.</string>
+    <string name="text_error">An error has occurred. Please try again by clicking REFRESH.</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_popular">Popular</string>
+    <string name="action_top_rated">Top Rated</string>
+    <string name="button_favorite">Mark as Favorite</string>
+</resources>
