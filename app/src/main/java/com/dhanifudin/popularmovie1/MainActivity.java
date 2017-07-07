@@ -60,18 +60,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         movieAdapter.setMovies(movies);
         moviesView.setAdapter(movieAdapter);
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey(Constants.CATEGORY)) {
+        if (savedInstanceState == null) {
             category = Constants.CATEGORY_POPULAR;
-        } else {
-            category = savedInstanceState.getString(Constants.CATEGORY);
-        }
-        if (savedInstanceState == null || !savedInstanceState.containsKey(Constants.MOVIES)) {
             requestMovies();
         } else {
+            category = savedInstanceState.getString(Constants.CATEGORY);
             Parcelable[] parcelableMovies = savedInstanceState.getParcelableArray(Constants.MOVIES);
             if (parcelableMovies != null) {
                 movies = Arrays.copyOf(parcelableMovies, parcelableMovies.length, Movie[].class);
                 movieAdapter.setMovies(movies);
+            } else {
+                requestMovies();
             }
         }
     }
@@ -114,10 +113,22 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         return super.onOptionsItemSelected(item);
     }
 
+    private boolean isOnline() {
+        ConnectivityManager cm = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        return info != null && info.isConnectedOrConnecting();
+    }
+
     private void requestMovies() {
-        Toast.makeText(this, "Requesting " + category + " movies.", Toast.LENGTH_LONG)
-                .show();
-        new TheMovieTask().execute(category);
+        if (isOnline()) {
+            Toast.makeText(this, "Requesting " + category + " movies.", Toast.LENGTH_LONG)
+                    .show();
+            new TheMovieTask().execute(category);
+        } else {
+            Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 
     private void showMovieDataView() {
@@ -149,11 +160,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             String category = params[0];
             Movie[] movies = null;
             try {
-                if (isOnline()) {
-                    URL requestUrl = NetworkUtils.buildUrl(category);
-                    String response = NetworkUtils.getResponseFromHttpUrl(requestUrl);
-                    movies = JsonUtils.getMovies(response);
-                }
+                URL requestUrl = NetworkUtils.buildUrl(category);
+                String response = NetworkUtils.getResponseFromHttpUrl(requestUrl);
+                movies = JsonUtils.getMovies(response);
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
@@ -172,11 +181,5 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
             }
         }
 
-        private boolean isOnline() {
-            ConnectivityManager cm = (ConnectivityManager)
-                    getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo info = cm.getActiveNetworkInfo();
-            return info != null && info.isConnectedOrConnecting();
-        }
     }
 }
